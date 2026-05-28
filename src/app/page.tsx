@@ -195,6 +195,41 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+<footer className="border-t border-cyan-400/10 px-6 py-10">
+
+  <div className="mx-auto flex max-w-7xl flex-col gap-6 text-center md:flex-row md:items-center md:justify-between md:text-left">
+
+    <p className="text-sm text-gray-400">
+      © 2026 DOMIFLAME ESPORTS. All rights reserved.
+    </p>
+
+    <div className="flex flex-wrap items-center justify-center gap-5 text-sm font-medium text-gray-300">
+
+      <Link href="/about" className="hover:text-cyan-400">
+        About Us
+      </Link>
+
+      <Link href="/contact" className="hover:text-cyan-400">
+        Contact Us
+      </Link>
+
+      <Link href="/privacy-policy" className="hover:text-cyan-400">
+        Privacy Policy
+      </Link>
+
+      <Link href="/terms-and-conditions" className="hover:text-cyan-400">
+        Terms & Conditions
+      </Link>
+
+      <Link href="/refund-policy" className="hover:text-cyan-400">
+        Refund Policy
+      </Link>
+
+    </div>
+  </div>
+</footer>
+
     </main>
   );
 }
