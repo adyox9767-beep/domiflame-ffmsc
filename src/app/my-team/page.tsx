@@ -19,7 +19,7 @@ export default function MyTeamPage() {
 
   const [loading, setLoading] =
     useState(true);
-
+    
   const [team, setTeam] =
     useState<any>(null);
 
@@ -71,6 +71,8 @@ export default function MyTeamPage() {
           }
         }
       );
+
+const cardReady = team?.idCard?.status === "uploaded";
 
     return () => unsubscribe();
 
@@ -196,6 +198,32 @@ export default function MyTeamPage() {
 
         </div>
 
+{team?.idCard?.status === "uploaded" && (  <div className="mt-12 rounded-[35px] border border-cyan-400/20 bg-white/5 p-8">
+
+    <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
+      ID CARD
+    </p>
+
+    <img
+      src={team.idCard.imageUrl}
+      className="mt-6 w-full rounded-3xl border border-cyan-400/20"
+    />
+
+    <div className="mt-6 flex gap-4">
+
+      <a
+        href={team.idCard.imageUrl}
+        download
+        className="rounded-full bg-cyan-500 px-6 py-3 font-bold text-black"
+      >
+        Download Card
+      </a>
+
+    </div>
+
+  </div>
+)}
+
         {/* PLAYERS */}
         <div className="mt-12">
 
@@ -240,14 +268,6 @@ export default function MyTeamPage() {
                       </p>
 
                       <div className="mt-6 flex flex-wrap gap-4">
-
-                        <a
-                          href={`/id-card/${player.playerId}`}
-                          target="_blank"
-                          className="rounded-full bg-cyan-500 px-6 py-3 font-bold text-black transition hover:bg-cyan-400"
-                        >
-                          View ID Card
-                        </a>
 
                         <a
                           href={`/verify/${player.playerId}`}

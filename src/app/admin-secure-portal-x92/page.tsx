@@ -133,14 +133,14 @@ if (checkingAdmin) {
   // APPROVE
  const approveTeam = async (team: any) => {
   try {
+    const slotNumber = Math.floor(Math.random() * 100) + 1;
 
     const updatedPlayers = await Promise.all(
       team.players.map(async (player: any) => {
-
         const playerId = generatePlayerId();
 
         const qrData =
-  `https://domiflame-ffmsc.vercel.app/verify/${playerId}`;
+          `https://domiflame-ffmsc.vercel.app/verify/${playerId}`;
 
         const qrCode = await generateQr(qrData);
 
@@ -153,21 +153,56 @@ if (checkingAdmin) {
       })
     );
 
-    await updateDoc(
-      doc(db, "registrations", team.id),
-      {
-        status: "approved",
+const downloadRawCardData = (team: any) => {
+  const cardData = {
+    teamName: team.teamName,
+    slotNumber: team.slotNumber,
+    captainName: team.captainName,
+    players: team.players,
+    teamId: team.id,
+  };
 
-        approvedAt: new Date(),
+  const blob = new Blob(
+    [JSON.stringify(cardData, null, 2)],
+    { type: "application/json" }
+  );
 
-        players: updatedPlayers,
-      }
-    );
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${team.teamName}-ID-CARD.json`;
+  a.click();
+};
+
+    const markCardReady = async (team: any) => {
+  try {
+    await updateDoc(doc(db, "registrations", team.id), {
+      "idCard.status": "ready_for_design",
+    });
 
     fetchRegistrations();
+    alert("Card design ke liye ready ho gaya 👍");
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-    alert("Team Approved & ID Cards Generated");
+    await updateDoc(doc(db, "registrations", team.id), {
+      status: "approved",
+      approvedAt: new Date(),
+      slotNumber,
+      players: updatedPlayers,
 
+      // 👇 IMPORTANT (ID CARD START HERE)
+      idCard: {
+        status: "generated",
+        imageUrl: "",
+      },
+    });
+
+    fetchRegistrations();
+    alert("Team approve ho gayi 👍");
   } catch (error) {
     console.error(error);
   }
@@ -279,31 +314,63 @@ const toggleRegistration = async () => {
   }
 };
 
+const generateCardState = async (team: any) => {
+  try {
+    await updateDoc(doc(db, "registrations", team.id), {
+      idCard: {
+        status: "ready_to_design",
+      },
+    });
+
+    fetchRegistrations();
+    alert("Card ready for admin design");
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+  function downloadRawCardData(team: any): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
-    <main className="min-h-screen bg-white px-6 py-24">
+    <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black px-6 py-24 text-white">
       <div className="mx-auto max-w-7xl">
         
         {/* HEADER */}
-        <div className="mb-12">
-          <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-cyan-600">
-            DOMIFLAME ESPORTS
-          </p>
+        <div className="mb-12 text-center">
 
-          <h1 className="text-5xl font-black text-black">
-            Admin Dashboard
-          </h1>
+  <p className="text-sm font-bold uppercase tracking-[0.5em] text-cyan-400">
+    DOMIFLAME ESPORTS
+  </p>
 
-          <p className="mt-4 text-gray-700">
-            Manage FFMSC tournament registrations and approvals.
-          </p>
-        </div>
+  <h1 className="mt-4 text-6xl font-black text-white">
+    CONTROL CENTER
+  </h1>
+
+  <p className="mt-6 text-gray-400 text-lg">
+    FFMSC 2026 Tournament Management System
+  </p>
+
+  <div className="mt-6 flex justify-center gap-4 text-sm text-gray-500">
+    <span>• Registrations</span>
+    <span>• Payments</span>
+    <span>• Slots</span>
+    <span>• ID Cards</span>
+  </div>
+
+</div>
 
         {/* TOURNAMENT CONTROL */}
-<div className="mb-10 rounded-[40px] border border-cyan-200 bg-white p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)]">
+<div className="mb-10 rounded-[30px] border border-cyan-400/30 bg-white/5 p-8 backdrop-blur-xl shadow-[0_0_80px_rgba(34,211,238,0.15)]">
 
   <p className="text-sm font-bold uppercase tracking-[0.3em] text-cyan-600">
     Registration Control
   </p>
+
+<span className="text-cyan-400 font-black tracking-widest animate-pulse">
+  LIVE REGISTRATION SYSTEM
+</span>
 
   <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 
@@ -439,7 +506,7 @@ const toggleRegistration = async () => {
 </button>
 
                <button
-  onClick={() => approveTeam(team)}
+  onClick={() => downloadRawCardData(team)}
   disabled={
   team.paymentStatus !==
   "approved"

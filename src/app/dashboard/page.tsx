@@ -240,6 +240,17 @@ setEmailVerified(
     ]);
   };
   
+  const removeSubstitute = () => {
+
+    if (players.length <= 4) {
+      return;
+    }
+
+    setPlayers(players.slice(0, -1));
+  };
+
+
+  
 const handleImageUpload = async (
   e: React.ChangeEvent<HTMLInputElement>,
   type: "teamLogo" | "payment"
@@ -314,7 +325,6 @@ if (!emailVerified) {
     if (
   !teamName ||
   !captainName ||
-  !captainUid ||
   !captainPhone ||
   !paymentScreenshot ||
   !teamLogo
@@ -605,22 +615,10 @@ setAlreadyRegistered(true);
 
               <input
                 type="text"
-                placeholder="Captain Name"
+                placeholder="Captain Real Name"
                 value={captainName}
                 onChange={(e) =>
                   setCaptainName(
-                    e.target.value
-                  )
-                }
-                className="rounded-2xl border border-cyan-400/20 bg-black/30 px-4 py-4 text-white outline-none"
-              />
-
-              <input
-                type="text"
-                placeholder="Captain UID"
-                value={captainUid}
-                onChange={(e) =>
-                  setCaptainUid(
                     e.target.value
                   )
                 }
@@ -738,6 +736,17 @@ setAlreadyRegistered(true);
               >
                 + Add Substitute
               </button>
+
+               {/* REMOVE SUBSTITUTE */}
+              <button
+                onClick={
+                  removeSubstitute
+                }
+                className="mt-6 rounded-full border border-cyan-500 px-6 py-3 font-semibold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
+              >
+                - Remove Substitute
+              </button>
+
             </div>
 
 {/* PAYMENT */}
