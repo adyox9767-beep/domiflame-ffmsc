@@ -1,3 +1,3 @@
 export const adminEmails = [
-  "sasukegot2m@gmail.com",
+  "adyox9767@gmail.com",
 ];

@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 
 import {
@@ -65,26 +67,18 @@ export default function Navbar() {
 
         {/* LOGO */}
         <Link
-          href="/"
-          className="flex items-center gap-3"
-        >
-
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-500 text-xl font-black text-black">
-            D
-          </div>
-
-          <div>
-
-            <h1 className="text-lg font-black tracking-widest text-white">
-              DOMIFLAME
-            </h1>
-
-            <p className="text-xs uppercase tracking-[0.3em] text-cyan-400">
-              ESPORTS
-            </p>
-
-          </div>
-        </Link>
+  href="/"
+  className="flex items-center"
+>
+  <Image
+    src="/logo.png"
+    alt="Domiflame Esports"
+    width={220}
+    height={70}
+    priority
+    className="h-auto w-[170px] sm:w-[210px] object-contain"
+  />
+</Link>
 
         {/* DESKTOP */}
         <nav className="hidden items-center gap-8 lg:flex">
@@ -113,13 +107,6 @@ export default function Navbar() {
               </Link>
             </>
           )}
-
-          <Link
-            href="/admin-secure-portal-x92"
-            className="text-sm font-bold uppercase tracking-[0.2em] text-gray-300 transition hover:text-cyan-400"
-          >
-            Admin
-          </Link>
 
           <Link
             href={

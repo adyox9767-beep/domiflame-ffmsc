@@ -58,35 +58,6 @@ export default function Home() {
             {/* INFO */}
             <div className="mt-12 grid gap-6 sm:grid-cols-3">
 
-              <div className="rounded-3xl border border-cyan-400/20 bg-white/5 p-5 backdrop-blur-xl">
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
-                  Teams
-                </p>
-
-                <h2 className="mt-3 text-4xl font-black">
-                  500+
-                </h2>
-              </div>
-
-              <div className="rounded-3xl border border-cyan-400/20 bg-white/5 p-5 backdrop-blur-xl">
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
-                  Mode
-                </p>
-
-                <h2 className="mt-3 text-4xl font-black">
-                  LAN
-                </h2>
-              </div>
-
-              <div className="rounded-3xl border border-cyan-400/20 bg-white/5 p-5 backdrop-blur-xl">
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
-                  Status
-                </p>
-
-                <h2 className="mt-3 text-4xl font-black text-cyan-400">
-                  LIVE
-                </h2>
-              </div>
             </div>
           </div>
 
@@ -138,25 +109,7 @@ export default function Home() {
     {/* BOTTOM */}
     <div className="mt-10 grid grid-cols-2 gap-4">
 
-      <div className="rounded-3xl border border-cyan-400/20 bg-white/5 p-5">
-        <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
-          ENTRY
-        </p>
-
-        <h3 className="mt-3 text-2xl font-black text-white">
-          VERIFIED
-        </h3>
-      </div>
-
-      <div className="rounded-3xl border border-cyan-400/20 bg-white/5 p-5">
-        <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
-          ACCESS
-        </p>
-
-        <h3 className="mt-3 text-2xl font-black text-cyan-400">
-          QR ID
-        </h3>
-      </div>
+      
     </div>
   </div>
 </div>
@@ -233,7 +186,7 @@ export default function Home() {
             </p>
 
             <p>
-              Email: domiflameesports@gmail.com
+              Email:  domiflamesupport@gmail.com
             </p>
 
             <p>
