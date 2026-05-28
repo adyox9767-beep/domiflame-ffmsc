@@ -693,7 +693,7 @@ setAlreadyRegistered(true);
 
                       <input
                         type="text"
-                        placeholder="Player Name"
+                        placeholder="Player IGN"
                         value={player.name}
                         onChange={(e) =>
                           updatePlayer(
