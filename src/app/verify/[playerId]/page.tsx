@@ -11,9 +11,13 @@ import { db } from "@/lib/firebase";
 
 export default function VerifyPage({
   params,
+  searchParams,
 }: {
   params: {
     playerId: string;
+  };
+  searchParams: {
+    team?: string;
   };
 }) {
 
@@ -26,74 +30,40 @@ export default function VerifyPage({
   const [team, setTeam] =
     useState<any>(null);
 
-  useEffect(() => {
+  const verifyPlayer = async () => {
+  try {
+    const snapshot = await getDocs(collection(db, "registrations"));
 
-    const verifyPlayer =
-      async () => {
+    let foundPlayer = null;
+    let foundTeam = null;
 
-        try {
+    snapshot.forEach((docItem) => {
+      const data = docItem.data();
 
-          const snapshot =
-            await getDocs(
-              collection(
-                db,
-                "registrations"
-              )
-            );
+      // ✅ IMPORTANT: match team first (if QR has team id)
+      if (searchParams?.team && docItem.id !== searchParams.team) {
+        return;
+      }
 
-          let foundPlayer =
-            null;
+      const matched = data.players?.find(
+        (p: any) => p.playerId === params.playerId
+      );
 
-          let foundTeam =
-            null;
+      if (matched) {
+        foundPlayer = matched;
+        foundTeam = data;
+      }
+    });
 
-          snapshot.forEach(
-            (docItem) => {
+    setPlayer(foundPlayer);
+    setTeam(foundTeam);
 
-              const data =
-                docItem.data();
-
-              const matched =
-                data.players?.find(
-                  (
-                    p: any
-                  ) =>
-                    p.playerId ===
-                    params.playerId
-                );
-
-              if (matched) {
-
-                foundPlayer =
-                  matched;
-
-                foundTeam =
-                  data;
-              }
-            }
-          );
-
-          setPlayer(
-            foundPlayer
-          );
-
-          setTeam(
-            foundTeam
-          );
-
-        } catch (error) {
-
-          console.error(error);
-
-        } finally {
-
-          setLoading(false);
-        }
-      };
-
-    verifyPlayer();
-
-  }, [params.playerId]);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // LOADING
   if (loading) {

@@ -14,6 +14,12 @@ import { generatePlayerId } from "@/utils/generatePlayerId";
 
 import { generateQr } from "@/utils/generateQr";
 
+import { generateIdCardImage } from "@/utils/generateIdCard";
+
+import { toPng } from "html-to-image";
+
+import IdCardTemplate from "@/components/IdCardTemplate";
+
 import {
   collection,
   getDocs,
@@ -39,6 +45,58 @@ const [registrationOpen, setRegistrationOpen] =
 const [slotInputs, setSlotInputs] =
   useState<{ [key: string]: string }>({});
 
+const generatePlayerCard = async (player: any, team: any) => {
+  const element = document.getElementById(
+    `card-${player.playerId}`
+  );
+
+  if (!element) return;
+
+  const imageUrl = await toPng(element);
+
+  await updateDoc(doc(db, "registrations", team.id), {
+    idCardImage: imageUrl,
+  });
+
+  alert("ID Card Generated");
+};
+
+const generatePngCard = async (player: any, team: any) => {
+
+  const node = document.getElementById(`card-${player.playerId}`);
+
+  if (!node) {
+    alert("Card design not found");
+    return;
+  }
+
+await new Promise((res) => setTimeout(res, 500));
+  const domtoimage = (await import("dom-to-image-more")).default;
+
+await new Promise((res) => setTimeout(res, 800));
+const dataUrl = await domtoimage.toPng(node, {
+  cacheBust: true,
+  pixelRatio: 2,
+});
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+
+const url = URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+a.href = url;
+a.download = `${player.name || "id-card"}.png`;
+a.click();
+
+URL.revokeObjectURL(url);
+  await updateDoc(doc(db, "registrations", team.id), {
+    "idCard.imageUrl": url,
+    "idCard.status": "uploaded",
+  });
+
+  alert("PNG Generated");
+};
+
   // FETCH DATA
   const fetchRegistrations = async () => {
     try {
@@ -54,7 +112,7 @@ const [slotInputs, setSlotInputs] =
           ...docItem.data(),
         });
       });
-
+console.log("REGISTRATIONS DATA:", data);
       setRegistrations(data);
     } catch (error) {
       console.error(error);
@@ -153,6 +211,8 @@ if (checkingAdmin) {
       })
     );
 
+console.log("PLAYERS BEFORE SAVE:", updatedPlayers);
+
 const downloadRawCardData = (team: any) => {
   const cardData = {
     teamName: team.teamName,
@@ -188,12 +248,20 @@ const downloadRawCardData = (team: any) => {
   }
 };
 
+console.log("FINAL PLAYERS SAVING:", updatedPlayers);
+
     await updateDoc(doc(db, "registrations", team.id), {
       status: "approved",
       approvedAt: new Date(),
       slotNumber,
-      players: updatedPlayers,
-
+players: updatedPlayers.map((p) => ({
+  name: p.name,
+  uid: p.uid,
+  role: p.role,
+  playerId: p.playerId,
+  qrCode: p.qrCode,
+  approved: true,
+})),
       // 👇 IMPORTANT (ID CARD START HERE)
       idCard: {
         status: "generated",
@@ -329,9 +397,31 @@ const generateCardState = async (team: any) => {
   }
 };
 
-  function downloadRawCardData(team: any): void {
-    throw new Error("Function not implemented.");
-  }
+const downloadRawCardData = (team: any) => {
+  const cardData = {
+    teamName: team.teamName,
+    slotNumber: team.slotNumber,
+    captainName: team.captainName,
+    captainUid: team.captainUid,
+    captainPhone: team.captainPhone,
+    players: team.players,
+    teamId: team.id,
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(cardData, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${team.teamName}-ID-CARD.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black px-6 py-24 text-white">
@@ -482,6 +572,13 @@ const generateCardState = async (team: any) => {
                 {/* ACTIONS */}
                <div className="flex flex-wrap gap-4"> 
 
+<button
+  onClick={() => approveTeam(team)}
+  className="bg-blue-500 px-6 py-3 rounded text-white font-bold"
+>
+  Approve Team (Generate ID + QR)
+</button>
+
                 <button
   onClick={() =>
     approvePayment(
@@ -503,26 +600,6 @@ const generateCardState = async (team: any) => {
   "approved"
     ? "Payment Approved"
     : "Approve Payment"}
-</button>
-
-               <button
-  onClick={() => downloadRawCardData(team)}
-  disabled={
-  team.paymentStatus !==
-  "approved"
-}
-  className={`rounded-full px-6 py-3 font-semibold transition
-  ${
-    team.status === "approved"
-      ? "bg-green-500 text-white"
-      : "bg-cyan-500 text-white hover:bg-cyan-600"
-  }`}
->
-  {
-  team.status === "approved"
-    ? "Approved"
-    : "Generate Cards"
-}
 </button>
 
                   <button
@@ -579,6 +656,7 @@ const generateCardState = async (team: any) => {
                     key={index}
                     className="rounded-3xl border border-cyan-100 p-5"
                   >
+
                     <p className="font-bold text-black">
                       {player.name || "Unnamed Player"}
                     </p>
@@ -591,11 +669,32 @@ const generateCardState = async (team: any) => {
                       {player.role}
                     </p>
 
+                    <button
+                     onClick={() => generatePngCard(player, team)}
+                     className="bg-green-500 px-4 py-2 rounded"
+>
+                     Generate PNG
+                      </button>
+
 {player.playerId && (
   <p className="mt-2 break-all text-sm text-green-600">
     ID: {player.playerId}
   </p>
 )}
+
+<div
+  style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    opacity: 0,
+    pointerEvents: "none"
+  }}
+>
+  <div id={`card-${player.playerId}`}>
+    <IdCardTemplate player={player} team={team} />
+  </div>
+</div>
 
                   </div>
                 ))}

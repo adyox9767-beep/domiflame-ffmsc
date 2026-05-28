@@ -72,7 +72,7 @@ export default function MyTeamPage() {
         }
       );
 
-const cardReady = team?.idCard?.status === "uploaded";
+const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
 
     return () => unsubscribe();
 
