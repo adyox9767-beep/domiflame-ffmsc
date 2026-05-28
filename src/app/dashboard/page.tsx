@@ -783,7 +783,7 @@ setAlreadyRegistered(true);
       </p>
 
       <p className="mt-2 text-gray-400">
-        Upload screenshot on imgbb.com and paste image URL here.
+        Upload Payment screenshot here.
       </p>
 
       <input
