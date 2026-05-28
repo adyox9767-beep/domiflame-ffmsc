@@ -643,7 +643,7 @@ setAlreadyRegistered(true);
               <div className="rounded-3xl border border-cyan-400/20 bg-black/30 p-5">
 
                 <p className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-cyan-400">
-                  Team Logo URL
+                  Team Logo
                 </p>
 
                 <input
@@ -779,7 +779,7 @@ setAlreadyRegistered(true);
     <div>
 
       <p className="text-lg font-bold text-white">
-        Upload Payment Screenshot URL
+        Upload Payment Screenshot 
       </p>
 
       <p className="mt-2 text-gray-400">
