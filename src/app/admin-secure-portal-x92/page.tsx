@@ -45,7 +45,11 @@ const [registrationOpen, setRegistrationOpen] =
 const [slotInputs, setSlotInputs] =
   useState<{ [key: string]: string }>({});
 
+  const [selectedFinalCards, setSelectedFinalCards] =
+  useState<{ [key: string]: File | null }>({});
+
 const generatePlayerCard = async (player: any, team: any) => {
+
   const element = document.getElementById(
     `card-${player.playerId}`
   );
@@ -95,6 +99,58 @@ URL.revokeObjectURL(url);
   });
 
   alert("PNG Generated");
+};
+
+const uploadFinalPlayerCard = async (
+  team: any,
+  playerIndex: number
+) => {
+  const key = `${team.id}-${playerIndex}`;
+  const file = selectedFinalCards[key];
+
+  if (!file) {
+    alert("Please select a file first");
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(
+      "https://api.imgbb.com/1/upload?key=0b79b9e9f039135617220379e656274c",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+    const imageUrl = data.data.url;
+
+    const updatedPlayers = [...team.players];
+
+    updatedPlayers[playerIndex] = {
+      ...updatedPlayers[playerIndex],
+      finalCardUrl: imageUrl,
+      finalCardUploaded: true,
+    };
+
+    await updateDoc(doc(db, "registrations", team.id), {
+      players: updatedPlayers,
+    });
+
+    setSelectedFinalCards({
+      ...selectedFinalCards,
+      [key]: null,
+    });
+
+    alert("Final player card uploaded");
+    fetchRegistrations();
+  } catch (error) {
+    console.error(error);
+    alert("Card upload failed");
+  }
 };
 
   // FETCH DATA
@@ -258,8 +314,11 @@ players: updatedPlayers.map((p) => ({
   name: p.name,
   uid: p.uid,
   role: p.role,
+  gender: p.gender || "",
   playerId: p.playerId,
   qrCode: p.qrCode,
+  finalCardUrl: p.finalCardUrl || "",
+  finalCardUploaded: p.finalCardUploaded || false,
   approved: true,
 })),
       // 👇 IMPORTANT (ID CARD START HERE)
@@ -523,15 +582,20 @@ const downloadRawCardData = (team: any) => {
   />
 )}
 
+<a
+  href={team.teamLogo}
+  target="_blank"
+  download
+  className="mt-3 inline-block rounded-full bg-cyan-500 px-4 py-2 text-sm font-bold text-black"
+>
+  Download Logo
+</a>
+
                   <p className="mt-3 text-gray-700">
                     Captain: {team.captainName}
                   </p>
 
-                  <p className="text-gray-700">
-                    UID: {team.captainUid}
-                  </p>
-
-<p className="mt-3 text-sm text-gray-600">
+          <p className="mt-3 text-sm text-gray-600">
   WhatsApp:
   {team.captainPhone}
 </p>
@@ -565,6 +629,15 @@ const downloadRawCardData = (team: any) => {
       alt="Payment"
       className="h-64 rounded-3xl border border-cyan-200 object-cover"
     />
+
+    <a
+  href={team.paymentScreenshot}
+  target="_blank"
+  download
+  className="mt-3 inline-block rounded-full bg-green-500 px-4 py-2 text-sm font-bold text-black"
+>
+  Download Screenshot
+</a>
 
   </div>
 )}
@@ -669,12 +742,66 @@ const downloadRawCardData = (team: any) => {
                       {player.role}
                     </p>
 
+                    <p className="mt-2 text-purple-600">
+  Gender: {player.gender || "-"}
+</p>
+
                     <button
                      onClick={() => generatePngCard(player, team)}
                      className="bg-green-500 px-4 py-2 rounded"
 >
                      Generate PNG
                       </button>
+
+                      <div className="mt-4">
+  <p className="mb-2 text-sm font-bold text-black">
+    Upload Final Designed Card
+  </p>
+
+  <input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0] || null;
+
+    setSelectedFinalCards({
+      ...selectedFinalCards,
+      [`${team.id}-${index}`]: file,
+    });
+  }}
+  className="w-full rounded-xl border border-cyan-200 px-3 py-2 text-black"
+/>
+
+{selectedFinalCards[`${team.id}-${index}`] && (
+  <button
+    onClick={() =>
+      uploadFinalPlayerCard(team, index)
+    }
+    className="mt-3 rounded-full bg-cyan-500 px-4 py-2 font-bold text-black"
+  >
+    Upload Final Card
+  </button>
+)}
+</div>
+
+{player.finalCardUrl && (
+  <div className="mt-4">
+    <img
+      src={player.finalCardUrl}
+      alt="Final Card"
+      className="w-full rounded-2xl border border-cyan-200"
+    />
+
+    <a
+      href={player.finalCardUrl}
+      target="_blank"
+      download
+      className="mt-3 inline-block rounded-full bg-cyan-500 px-4 py-2 font-bold text-black"
+    >
+      Download Final Card
+    </a>
+  </div>
+)}
 
 {player.playerId && (
   <p className="mt-2 break-all text-sm text-green-600">

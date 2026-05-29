@@ -6,7 +6,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
-  sendEmailVerification,
 } from "firebase/auth";
 
 import { useRouter } from "next/navigation";
@@ -45,7 +44,7 @@ export default function LoginPage() {
 
     } else {
 
-      router.push("/dashboard");
+router.push("/");
     }
   };
 
@@ -65,23 +64,7 @@ export default function LoginPage() {
           provider
         );
 
-      // EMAIL VERIFY CHECK
-      if (
-        !result.user.emailVerified
-      ) {
-
-        await sendEmailVerification(
-          result.user
-        );
-
-        alert(
-          "Please verify your email first. Verification link sent again."
-        );
-
-        return;
-      }
-
-      handleLoginRedirect(
+        handleLoginRedirect(
         result.user
       );
 
@@ -111,23 +94,7 @@ export default function LoginPage() {
           password
         );
 
-      // VERIFY CHECK
-      if (
-        !result.user.emailVerified
-      ) {
-
-        await sendEmailVerification(
-          result.user
-        );
-
-        alert(
-          "Please verify your email before login. Verification email sent again."
-        );
-
-        return;
-      }
-
-      handleLoginRedirect(
+        handleLoginRedirect(
         result.user
       );
 

@@ -15,6 +15,8 @@ import {
 
 import { auth, db } from "@/lib/firebase";
 
+import Navbar from "@/components/Navbar";
+
 export default function MyTeamPage() {
 
   const [loading, setLoading] =
@@ -72,8 +74,6 @@ export default function MyTeamPage() {
         }
       );
 
-const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
-
     return () => unsubscribe();
 
   }, []);
@@ -115,7 +115,9 @@ const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-24 text-white">
+  <>
+    <Navbar />
+    <main className="min-h-screen bg-black px-6 py-32 text-white">
 
       <div className="mx-auto max-w-6xl">
 
@@ -198,32 +200,6 @@ const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
 
         </div>
 
-{team?.idCard?.status === "uploaded" && (  <div className="mt-12 rounded-[35px] border border-cyan-400/20 bg-white/5 p-8">
-
-    <p className="text-sm uppercase tracking-[0.3em] text-cyan-400">
-      ID CARD
-    </p>
-
-    <img
-      src={team.idCard.imageUrl}
-      className="mt-6 w-full rounded-3xl border border-cyan-400/20"
-    />
-
-    <div className="mt-6 flex gap-4">
-
-      <a
-        href={team.idCard.imageUrl}
-        download
-        className="rounded-full bg-cyan-500 px-6 py-3 font-bold text-black"
-      >
-        Download Card
-      </a>
-
-    </div>
-
-  </div>
-)}
-
         {/* PLAYERS */}
         <div className="mt-12">
 
@@ -258,6 +234,33 @@ const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
                     {player.uid}
                   </p>
 
+                  <p className="mt-2 text-gray-300">
+  Gender: {player.gender || "-"}
+</p>
+
+{player.finalCardUrl && (
+  <div className="mt-6">
+    <p className="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-cyan-400">
+      Final ID Card
+    </p>
+
+    <img
+      src={player.finalCardUrl}
+      alt="Final ID Card"
+      className="w-full rounded-2xl border border-cyan-400/20"
+    />
+
+    <a
+      href={player.finalCardUrl}
+      download
+      target="_blank"
+      className="mt-4 inline-block rounded-full bg-cyan-500 px-6 py-3 font-bold text-black"
+    >
+      Download ID Card
+    </a>
+  </div>
+)}
+
                   {player.playerId && (
 
                     <>
@@ -269,13 +272,12 @@ const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
 
                       <div className="mt-6 flex flex-wrap gap-4">
 
-                        <a
-                          href={`/verify/${player.playerId}`}
-                          target="_blank"
-                          className="rounded-full border border-cyan-400 px-6 py-3 font-bold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
-                        >
-                          Verify
-                        </a>
+                        <button
+  disabled
+  className="rounded-full border border-gray-500 px-6 py-3 font-bold text-gray-400"
+>
+  Verify Coming Soon
+</button>
 
                       </div>
                     </>
@@ -291,5 +293,6 @@ const cardReady = team?.idCard?.imageUrl && team.idCard.imageUrl !== "";
 
       </div>
     </main>
+    </>
   );
 }

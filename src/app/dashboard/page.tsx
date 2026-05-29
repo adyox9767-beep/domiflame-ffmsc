@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 import {
   addDoc,
   collection,
@@ -11,10 +13,6 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-
-import {
-  sendEmailVerification,
-} from "firebase/auth";
 
 import { db } from "@/lib/firebase";
 
@@ -26,12 +24,12 @@ import Navbar from "@/components/Navbar";
 
 export default function DashboardPage() {
 
+const router = useRouter();
+
   // TEAM
   const [teamName, setTeamName] = useState("");
 
   const [captainName, setCaptainName] = useState("");
-
-  const [captainUid, setCaptainUid] = useState("");
 
   const [captainEmail, setCaptainEmail] =
     useState("");
@@ -44,9 +42,6 @@ const [captainPhone, setCaptainPhone] =
 
 const [paymentScreenshot, setPaymentScreenshot] =
   useState("");
-
-const [emailVerified, setEmailVerified] =
-  useState(false);
 
   const [uploadingImage, setUploadingImage] =
   useState(false);
@@ -61,21 +56,25 @@ const [emailVerified, setEmailVerified] =
       name: "",
       uid: "",
       role: "Player 1",
+      gender: "",
     },
     {
       name: "",
       uid: "",
       role: "Player 2",
+      gender: "",
     },
     {
       name: "",
       uid: "",
       role: "Player 3",
+      gender: "",
     },
     {
       name: "",
       uid: "",
       role: "Player 4",
+      gender: "",
     },
   ]);
 
@@ -99,32 +98,6 @@ const [emailVerified, setEmailVerified] =
     setAcceptedRules] =
     useState(false);
 
-  // SEND VERIFICATION EMAIL
-  const sendVerificationEmail =
-    async () => {
-
-      if (!auth.currentUser) return;
-
-      try {
-
-        await sendEmailVerification(
-          auth.currentUser
-        );
-
-        alert(
-          "Verification email sent"
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        alert(
-          "Failed to send verification email"
-        );
-      }
-    };
-
   // AUTH CHECK
   useEffect(() => {
     
@@ -134,9 +107,9 @@ const [emailVerified, setEmailVerified] =
         async (user) => {
 
           if (!user) {
-            setCheckingRegistration(false);
-            return;
-          }
+  router.push("/login");
+  return;
+}
 
           setCaptainEmail(
             user.email || ""
@@ -145,12 +118,6 @@ const [emailVerified, setEmailVerified] =
           setCaptainAuthId(
             user.uid
           );
-
-          await user.reload();
-
-setEmailVerified(
-  auth.currentUser?.emailVerified || false
-);
 
           // CHECK EXISTING REGISTRATION
           const existingQuery = query(
@@ -203,7 +170,7 @@ setEmailVerified(
 
     return () => unsubscribe();
 
-  }, []);
+}, [router]);
 
   // UPDATE PLAYER
   const updatePlayer = (
@@ -236,6 +203,7 @@ setEmailVerified(
         name: "",
         uid: "",
         role: "Substitute",
+        gender: "",
       },
     ]);
   };
@@ -315,22 +283,15 @@ const handleImageUpload = async (
   // SUBMIT
   const handleSubmit = async () => {
 
-if (!emailVerified) {
-  alert(
-    "Please verify your email first"
-  );
-  return;
-}
-
     if (
-  !teamName ||
-  !captainName ||
-  !captainPhone ||
+  !teamName.trim() ||
+  !captainName.trim() ||
+  !captainPhone.trim() ||
   !paymentScreenshot ||
   !teamLogo
-) {
+){
       alert(
-        "Please fill all team details"
+        "All field are mandatory"
       );
       return;
     }
@@ -338,13 +299,11 @@ if (!emailVerified) {
     const invalidPlayer =
   players.find((player) => {
 
-    const hasName =
-      player.name.trim() !== "";
-
-    const hasUid =
-      player.uid.trim() !== "";
-
-    return hasName !== hasUid;
+    return (
+      !player.name.trim() ||
+      !player.uid.trim() ||
+      !player.gender?.trim()
+    );
   });
 
     if (invalidPlayer) {
@@ -408,8 +367,6 @@ if (!teamSnapshot.empty) {
 
           captainName,
 
-          captainUid,
-
           captainEmail,
 
           captainAuthId,
@@ -433,8 +390,6 @@ setAlreadyRegistered(true);
 
       setCaptainName("");
 
-      setCaptainUid("");
-
       setTeamLogo("");
 
       setCaptainPhone("");
@@ -448,21 +403,25 @@ setAlreadyRegistered(true);
           name: "",
           uid: "",
           role: "Player 1",
+          gender: "",
         },
         {
           name: "",
           uid: "",
           role: "Player 2",
+          gender: "",
         },
         {
           name: "",
           uid: "",
           role: "Player 3",
+          gender: "",
         },
         {
           name: "",
           uid: "",
           role: "Player 4",
+          gender: "",
         },
       ]);
 
@@ -572,29 +531,7 @@ setAlreadyRegistered(true);
             </p>
           </div>
 
-{/* EMAIL VERIFY */}
-{!emailVerified && (
-
-  <div className="mb-10 rounded-[30px] border border-yellow-500/30 bg-yellow-500/10 p-6">
-
-    <h2 className="text-2xl font-black text-yellow-300">
-      Verify Your Email
-    </h2>
-
-    <p className="mt-3 text-yellow-100">
-      Please verify your email before registering your team.
-    </p>
-
-    <button
-      onClick={sendVerificationEmail}
-      className="mt-5 rounded-full bg-yellow-400 px-6 py-3 font-black text-black"
-    >
-      Send Verification Email
-    </button>
-
-  </div>
-)}
-
+<>
           {/* FORM */}
           <div className="rounded-[40px] border border-cyan-400/20 bg-white/5 p-10">
 
@@ -717,35 +654,42 @@ setAlreadyRegistered(true);
                         className="rounded-2xl border border-cyan-400/20 bg-black/30 px-4 py-4 text-white outline-none"
                       />
 
-                      <div className="flex items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-4 font-semibold text-cyan-400">
-
-                        {player.role}
-
-                      </div>
+                      <select
+  value={player.gender}
+  onChange={(e) =>
+    updatePlayer(
+      index,
+      "gender",
+      e.target.value
+    )
+  }
+  className="rounded-2xl border border-cyan-400/20 bg-black/30 px-4 py-4 text-white outline-none"
+>
+  <option value="">Select Gender</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+  <option value="Other">Other</option>
+</select>
                     </div>
                   )
                 )}
               </div>
 
-              {/* ADD SUBSTITUTE */}
-              <button
-                onClick={
-                  addSubstitute
-                }
-                className="mt-6 rounded-full border border-cyan-500 px-6 py-3 font-semibold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
-              >
-                + Add Substitute
-              </button>
-
-               {/* REMOVE SUBSTITUTE */}
-              <button
-                onClick={
-                  removeSubstitute
-                }
-                className="mt-6 rounded-full border border-cyan-500 px-6 py-3 font-semibold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
-              >
-                - Remove Substitute
-              </button>
+              {players.length === 4 ? (
+  <button
+    onClick={addSubstitute}
+    className="mt-6 rounded-full border border-cyan-500 px-6 py-3 font-semibold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
+  >
+    + Add Substitute
+  </button>
+) : (
+  <button
+    onClick={removeSubstitute}
+    className="mt-6 rounded-full border border-red-500 px-6 py-3 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
+  >
+    - Remove Substitute
+  </button>
+)}
 
             </div>
 
@@ -876,17 +820,18 @@ setAlreadyRegistered(true);
               onClick={handleSubmit}
 disabled={
   loading ||
-  uploadingImage
-}              className="mt-12 w-full rounded-2xl bg-cyan-500 py-4 text-lg font-black text-black transition hover:bg-cyan-400 disabled:opacity-50"
+  uploadingImage 
+}            
+  className="mt-12 w-full rounded-2xl bg-cyan-500 py-4 text-lg font-black text-black transition hover:bg-cyan-400 disabled:opacity-50"
             >
               {uploadingImage
   ? "Uploading Image..."
   : loading
   ? "Submitting..."
   : "Submit Registration"}
-            </button>
-
-          </div>
+                        </button>
+              </div>
+           </>
         </div>
       </main>
     </>

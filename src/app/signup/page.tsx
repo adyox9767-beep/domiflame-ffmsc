@@ -4,9 +4,10 @@ import { useState } from "react";
 
 import {
   createUserWithEmailAndPassword,
-  sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
+
+import Navbar from "@/components/Navbar";
 
 import { auth } from "@/lib/firebase";
 
@@ -62,13 +63,8 @@ export default function SignupPage() {
         }
       );
 
-      // SEND VERIFY EMAIL
-      await sendEmailVerification(
-        result.user
-      );
-
       alert(
-        "Account created successfully. Please verify your email."
+        "Account created successfully."
       );
 
       router.push("/login");
@@ -89,7 +85,9 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 py-20">
+  <>
+    <Navbar />
+    <main className="flex min-h-screen items-center justify-center bg-black px-6 py-32">
 
       {/* GLOW */}
       <div className="absolute top-0 left-0 h-100 w-100 rounded-full bg-cyan-500/20 blur-3xl"></div>
@@ -186,5 +184,6 @@ export default function SignupPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

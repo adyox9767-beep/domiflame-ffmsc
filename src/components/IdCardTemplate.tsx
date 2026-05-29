@@ -22,6 +22,7 @@ export default function IdCardTemplate({ player, team }: any) {
       <h3>{player.name}</h3>
       <p>UID: {player.uid}</p>
       <p>Role: {player.role}</p>
+      <p>Gender: {player.gender || "-"}</p>
 
       {/* QR */}
 {player.qrCode ? (

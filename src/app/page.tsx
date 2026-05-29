@@ -1,11 +1,30 @@
+"use client";
+
 import Link from "next/link";
+
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 import Navbar from "@/components/Navbar";
 
+import EmailVerifyPopup from "@/components/EmailVerifyPopup";
+
 export default function Home() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <main className="min-h-screen overflow-hidden bg-black text-white">
       <Navbar />
+      <EmailVerifyPopup />
 
       {/* BACKGROUND GLOW */}
       <div className="absolute top-0 left-0 h-100 w-100 rounded-full bg-cyan-500/20 blur-3xl"></div>
@@ -41,11 +60,11 @@ export default function Home() {
             <div className="mt-10 flex flex-wrap gap-5">
 
               <Link
-                href="/dashboard"
-                className="rounded-full bg-cyan-500 px-8 py-4 text-lg font-black text-black transition hover:scale-105 hover:bg-cyan-400"
-              >
-                REGISTER NOW
-              </Link>
+  href={user ? "/dashboard" : "/login"}
+  className="rounded-full bg-cyan-500 px-8 py-4 text-lg font-black text-black transition hover:scale-105 hover:bg-cyan-400"
+>
+  {user ? "REGISTER TEAM" : "REGISTER NOW"}
+</Link>
 
               <a
                 href="#rules"
