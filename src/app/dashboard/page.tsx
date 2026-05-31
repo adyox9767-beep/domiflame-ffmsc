@@ -20,6 +20,8 @@ import { auth } from "@/lib/firebase";
 
 import { onAuthStateChanged } from "firebase/auth";
 
+import { uploadToSupabase } from "@/utils/uploadToSupabase";
+
 import Navbar from "@/components/Navbar";
 
 export default function DashboardPage() {
@@ -223,59 +225,34 @@ const handleImageUpload = async (
   e: React.ChangeEvent<HTMLInputElement>,
   type: "teamLogo" | "payment"
 ) => {
-
-  const file =
-    e.target.files?.[0];
+  const file = e.target.files?.[0];
 
   if (!file) return;
 
   try {
-
     setUploadingImage(true);
 
-    const formData =
-      new FormData();
+    const folder =
+      type === "teamLogo"
+        ? "team-logos"
+        : "payment-screenshots";
 
-    formData.append(
-      "image",
-      file
+    const imageUrl = await uploadToSupabase(
+      file,
+      folder
     );
-
-    const response =
-      await fetch(
-        "https://api.imgbb.com/1/upload?key=0b79b9e9f039135617220379e656274c",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-    const data =
-      await response.json();
-
-    const imageUrl =
-      data.data.url;
 
     if (type === "teamLogo") {
       setTeamLogo(imageUrl);
     }
 
     if (type === "payment") {
-      setPaymentScreenshot(
-        imageUrl
-      );
+      setPaymentScreenshot(imageUrl);
     }
-
   } catch (error) {
-
     console.error(error);
-
-    alert(
-      "Image upload failed"
-    );
-
+    alert("Image upload failed");
   } finally {
-
     setUploadingImage(false);
   }
 };

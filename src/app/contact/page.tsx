@@ -19,8 +19,8 @@ export default function ContactPage() {
             </h2>
 
             <p className="mt-2 text-lg text-gray-300">
-              domiflameesports@gmail.com
-            </p>
+              domiflamesupport@gmail.com
+       </p>
           </div>
 
           <div>
@@ -29,17 +29,17 @@ export default function ContactPage() {
             </h2>
 
             <p className="mt-2 text-lg text-gray-300">
-              @domiflameesports
+              @domiflame.in
             </p>
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-cyan-400">
-              Support
+              WhatsApp
             </h2>
 
             <p className="mt-2 text-lg text-gray-300">
-              WhatsApp Support Available
+              +91 9900871329
             </p>
           </div>
 

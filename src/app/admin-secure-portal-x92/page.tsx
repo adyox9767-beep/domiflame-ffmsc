@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 
 import { auth } from "@/lib/firebase";
 
+import { uploadToSupabase } from "@/utils/uploadToSupabase";
+
 import { adminEmails } from "@/lib/admin";
 
 import { generatePlayerId } from "@/utils/generatePlayerId";
@@ -17,6 +19,8 @@ import { generateQr } from "@/utils/generateQr";
 import { generateIdCardImage } from "@/utils/generateIdCard";
 
 import { toPng } from "html-to-image";
+
+import Navbar from "@/components/Navbar";
 
 import IdCardTemplate from "@/components/IdCardTemplate";
 
@@ -114,19 +118,10 @@ const uploadFinalPlayerCard = async (
   }
 
   try {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const response = await fetch(
-      "https://api.imgbb.com/1/upload?key=0b79b9e9f039135617220379e656274c",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json();
-    const imageUrl = data.data.url;
+    const imageUrl = await uploadToSupabase(
+  file,
+  "final-cards"
+);
 
     const updatedPlayers = [...team.players];
 
@@ -483,7 +478,9 @@ const downloadRawCardData = (team: any) => {
 };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black px-6 py-24 text-white">
+    <>
+      <Navbar />
+    <main className="min-h-screen bg-linear-to-b from-black via-gray-900 to-black px-6 py-24 text-white">
       <div className="mx-auto max-w-7xl">
         
         {/* HEADER */}
@@ -558,7 +555,7 @@ const downloadRawCardData = (team: any) => {
           {registrations.map((team) => (
             <div
               key={team.id}
-              className="rounded-[40px] border border-cyan-200 bg-white p-8 shadow-[0_0_60px_rgba(34,211,238,0.08)]"
+              className="rounded-[36px] border border-cyan-400/20 bg-white/10 p-8 backdrop-blur-xl shadow-[0_0_50px_rgba(34,211,238,0.10)]"
             >
               
               {/* TOP */}
@@ -606,10 +603,9 @@ const downloadRawCardData = (team: any) => {
 </p>
 
 {team.slotNumber && (
-  <p className="mt-2 text-sm font-bold text-cyan-600">
-    Slot:
-    {team.slotNumber}
-  </p>
+  <p className="mt-2 text-lg font-black text-cyan-400">
+  Slot: {team.slotNumber}
+</p>
 )}
 
                 </div>
@@ -647,7 +643,7 @@ const downloadRawCardData = (team: any) => {
 
 <button
   onClick={() => approveTeam(team)}
-  className="bg-blue-500 px-6 py-3 rounded text-white font-bold"
+  className="rounded-full bg-cyan-500 px-6 py-3 text-sm font-black uppercase tracking-[0.15em] text-black transition hover:scale-105 hover:bg-cyan-400"
 >
   Approve Team (Generate ID + QR)
 </button>
@@ -694,8 +690,8 @@ const downloadRawCardData = (team: any) => {
 
   <input
     type="text"
-    placeholder="Slot"
-    value={
+    placeholder="Slot Number"
+        value={
       slotInputs[team.id] || ""
     }
     onChange={(e) =>
@@ -705,7 +701,7 @@ const downloadRawCardData = (team: any) => {
           e.target.value,
       })
     }
-    className="rounded-2xl border border-cyan-200 px-4 py-3 outline-none"
+    className="rounded-2xl border border-cyan-400/30 bg-black/40 px-4 py-3 text-white outline-none"
   />
 
   <button
@@ -748,7 +744,7 @@ const downloadRawCardData = (team: any) => {
 
                     <button
                      onClick={() => generatePngCard(player, team)}
-                     className="bg-green-500 px-4 py-2 rounded"
+                     className="mt-4 rounded-full bg-green-500 px-5 py-3 text-sm font-black text-black transition hover:scale-105 hover:bg-green-400"
 >
                      Generate PNG
                       </button>
@@ -777,7 +773,7 @@ const downloadRawCardData = (team: any) => {
     onClick={() =>
       uploadFinalPlayerCard(team, index)
     }
-    className="mt-3 rounded-full bg-cyan-500 px-4 py-2 font-bold text-black"
+    className="mt-3 rounded-full bg-cyan-500 px-5 py-3 text-sm font-black text-black transition hover:scale-105 hover:bg-cyan-400"
   >
     Upload Final Card
   </button>
@@ -831,5 +827,6 @@ const downloadRawCardData = (team: any) => {
         </div>
       </div>
     </main>
+      </>    
   );
 }

@@ -183,38 +183,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CONTACT */}
-      <section className="border-t border-cyan-400/10 px-6 py-16">
-
-        <div className="mx-auto flex max-w-7xl flex-col gap-10 md:flex-row md:items-center md:justify-between">
-
-          <div>
-            <p className="text-sm uppercase tracking-[0.4em] text-cyan-400">
-              CONTACT
-            </p>
-
-            <h2 className="mt-4 text-4xl font-black">
-              DOMIFLAME ESPORTS
-            </h2>
-          </div>
-
-          <div className="space-y-3 text-gray-300">
-
-            <p>
-              Instagram: @domiflameesports
-            </p>
-
-            <p>
-              Email:  domiflamesupport@gmail.com
-            </p>
-
-            <p>
-              WhatsApp Support Available
-            </p>
-          </div>
-        </div>
-      </section>
-
 <footer className="border-t border-cyan-400/10 px-6 py-10">
 
   <div className="mx-auto flex max-w-7xl flex-col gap-6 text-center md:flex-row md:items-center md:justify-between md:text-left">
