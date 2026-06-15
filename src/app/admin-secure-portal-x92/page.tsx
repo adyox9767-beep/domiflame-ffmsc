@@ -592,6 +592,10 @@ const downloadRawCardData = (team: any) => {
                     Captain: {team.captainName}
                   </p>
 
+                  <p className="mt-2 text-sm font-black uppercase tracking-[0.2em] text-cyan-400">
+  City: {team.city || "Not Selected"}
+</p>
+
           <p className="mt-3 text-sm text-gray-600">
   WhatsApp:
   {team.captainPhone}
