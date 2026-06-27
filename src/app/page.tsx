@@ -159,12 +159,12 @@ export default function Home() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
             {[
-              "Only registered players are allowed.",
-              "QR verification required at LAN venue.",
-              "Teams can have max 4 players + 1 substitute.",
-              "No emulator or hacks allowed.",
-              "Players must use real Free Fire UID.",
-              "Admins can disqualify unfair teams instantly.",
+              "Only verified and registered players are allowed.",
+              "Maximum roster: 4 players + 1 substitute.",
+              "Hacks, emulators and unauthorized tools are prohibited.",
+              "Registrations are non-refundable after roster lock.",
+              "Approved cancellations before roster lock include a 40% cancellation fee.",
+              "Full refund is provided only if the organizer permanently cancels the event.",
             ].map((rule, index) => (
               <div
                 key={index}

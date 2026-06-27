@@ -576,11 +576,19 @@ className="h-18 w-18 object-contain"/>
               </p>
 
               <div className="mt-5 space-y-4 text-sm leading-relaxed text-gray-300">
-                <p>• Only real Free Fire IDs are allowed.</p>
-                <p>• QR verification is mandatory at LAN venue.</p>
-                <p>• Teams can have 4 players + 1 substitute only.</p>
-                <p>• Emulator, hacks or unfair play will result in direct ban.</p>
-                <p>• Admin decisions will be final.</p>
+                <p>• Only verified and registered players are allowed.</p>
+                <p>• Maximum roster: 4 players + 1 substitute.</p>
+                <p>• Hacks, emulators and unauthorized tools are prohibited.</p>
+                <p>• Registrations are non-refundable after roster lock.</p>
+                <p>• Approved cancellations before roster lock include a 40% cancellation fee.</p>
+                <p>• Full refund is provided only if the organizer permanently cancels the event</p>
+              
+              <a
+  href="/terms-and-conditions"
+  className="inline-block text-sm font-black uppercase tracking-[0.18em] text-cyan-400 transition hover:text-cyan-300"
+>
+  Read More →
+</a>
               </div>
 
               <label className="mt-7 flex cursor-pointer items-start gap-4 rounded-2xl border border-cyan-400/20 bg-black/35 p-4">
